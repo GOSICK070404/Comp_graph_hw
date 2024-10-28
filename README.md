@@ -70,6 +70,7 @@ grid_drawer.draw_line((x0, y0), (x1, y1), line_color)
 grid_drawer.show_image()
 grid_drawer.save_image('LineDrawing.png')
 ```
+![Рисунок 1](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/1.png)
 ## 2 — Круг (реализовать с помощью алгоритма Брезенхема)
 ```python
 import matplotlib.pyplot as plt # Импорт библиотек
