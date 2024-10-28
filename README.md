@@ -130,6 +130,7 @@ def main(): # Инициализация и вызов методов
 if __name__ == "__main__":
     main()
 ```
+![Рисунок 2](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/2.png)
 ## 3 — Циферблат (реализовать с помощью алгоритма Брезенхема)
 ```python
 import matplotlib.pyplot as plt
@@ -200,6 +201,7 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+![Рисунок 3](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/3.png)
 ## 4 — Алгоритм Сезерленда-Коэна (реализовать в виде кода)
 ```python
 import matplotlib.pyplot as plt
@@ -322,6 +324,7 @@ if __name__ == "__main__":
     # Визуализация
     display_plot(lines_to_clip, x_low, y_low, x_high, y_high)
 ```
+![Рисунок 4](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/4.png)
 ## 5 — Алгоритм Цирруса-Бека (реализовать в виде кода)
 ```python
 import numpy as np
@@ -422,6 +425,7 @@ if __name__ == "__main__":
     # Визуализация
     display_clipping_results(segment_list, poly_vertices)
 ```
+![Рисунок 5](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/5.png)
 ## 6 — Алгоритм заполнения замкнутых областей посредством "затравки"
 ```python
 import numpy as np
@@ -496,6 +500,7 @@ plt.title("После")
 plt.imshow(img_array)
 plt.show()
 ```
+![Рисунок 6](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/6.png)
 ## 7 — Алгоритм заполнения замкнутых областей посредством горизонтального сканирования
 ```python
 import numpy as np
@@ -580,6 +585,7 @@ plt.xlim(0, 6)
 plt.ylim(0, 5)
 plt.show()
 ```
+![Рисунок 7](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/7.png)
 # РК1 - ДЗ1
 ## 1 <Поляков> сравнение производительности алгоритма Брезенхема построения отрезков и метода из библиотеки pyopengl.
 ```python
