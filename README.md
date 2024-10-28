@@ -500,7 +500,7 @@ plt.title("После")
 plt.imshow(img_array)
 plt.show()
 ```
-![Рисунок 6](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/6.png)
+![Рисунок 6](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/6.png) 
 ## 7 — Алгоритм заполнения замкнутых областей посредством горизонтального сканирования
 ```python
 import numpy as np
