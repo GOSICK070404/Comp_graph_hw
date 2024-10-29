@@ -631,7 +631,7 @@ def bresenham_time_measure(segments):
     bresenham_time = end_time - start_time
     bresenham_density = total_bresenham_pixels / bresenham_time
     print("Время выполнения алгоритма Брезенхема:", bresenham_time)
-    print("Плотность отрисовки для алгоритма Брезенхема (пиксели/сек):", bresenham_density)
+    print("Скорость отрисовки для алгоритма Брезенхема (пиксели/сек):", bresenham_density)
 
 # Замер времени для метода OpenGL
 def opengl_time_measure(segments):
@@ -643,7 +643,7 @@ def opengl_time_measure(segments):
     opengl_time = end_time - start_time
     opengl_density = total_opengl_pixels / opengl_time
     print("Время выполнения метода OpenGL:", opengl_time)
-    print("Плотность отрисовки для метода OpenGL (пиксели/сек):", opengl_density)
+    print("Скорость отрисовки для метода OpenGL (пиксели/сек):", opengl_density)
 
 # Основная функция
 def main():
