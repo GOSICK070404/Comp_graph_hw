@@ -592,9 +592,13 @@ plt.show()
 import time
 import random
 import math
-from OpenGL.GL import *
+from skimage.draw import line as skimage_line
 
-# Функция алгоритма Брезенхема
+# Генерация случайных отрезков по случайным координатам
+def generate_segments(num_lines):
+    return [(random.randint(0, 999), random.randint(0, 999), random.randint(0, 999), random.randint(0, 999)) for _ in range(num_lines)]
+
+# Алгоритм Брезенхема
 def bresenham_line_create(x1, y1, x2, y2):
     points = []
     dx = abs(x2 - x1)
@@ -602,7 +606,6 @@ def bresenham_line_create(x1, y1, x2, y2):
     sx = 1 if x1 < x2 else -1
     sy = 1 if y1 < y2 else -1
     err = dx - dy
-
     while True:
         points.append((x1, y1))
         if x1 == x2 and y1 == y2:
@@ -616,9 +619,10 @@ def bresenham_line_create(x1, y1, x2, y2):
             y1 += sy
     return points
 
-# Генерация случайных отрезков
-def generate_segments(num_lines):
-    return [(random.randint(0, 999), random.randint(0, 999), random.randint(0, 999), random.randint(0, 999)) for _ in range(num_lines)]
+# Реализация с использованием библиотеки skimage
+def skimage_line_create(x1, y1, x2, y2):
+    rr, cc = skimage_line(x1, y1, x2, y2)
+    return list(zip(rr, cc))
 
 # Замер времени для алгоритма Брезенхема
 def bresenham_time_measure(segments):
@@ -633,17 +637,18 @@ def bresenham_time_measure(segments):
     print("Время выполнения алгоритма Брезенхема:", bresenham_time)
     print("Скорость отрисовки для алгоритма Брезенхема (пиксели/сек):", bresenham_density)
 
-# Замер времени для метода OpenGL
-def opengl_time_measure(segments):
-    total_opengl_pixels = 0
+# Замер времени для метода skimage
+def skimage_time_measure(segments):
+    total_skimage_pixels = 0
     start_time = time.time()
     for x1, y1, x2, y2 in segments:
-        total_opengl_pixels += int(math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)) 
+        points = skimage_line_create(x1, y1, x2, y2)
+        total_skimage_pixels += len(points)
     end_time = time.time()
-    opengl_time = end_time - start_time
-    opengl_density = total_opengl_pixels / opengl_time
-    print("Время выполнения метода OpenGL:", opengl_time)
-    print("Скорость отрисовки для метода OpenGL (пиксели/сек):", opengl_density)
+    skimage_time = end_time - start_time
+    skimage_density = total_skimage_pixels / skimage_time
+    print("Время выполнения метода skimage:", skimage_time)
+    print("Скорость отрисовки для метода skimage (пиксели/сек):", skimage_density)
 
 # Основная функция
 def main():
@@ -652,7 +657,7 @@ def main():
 
     # Запуск замеров
     bresenham_time_measure(segments)
-    opengl_time_measure(segments)
+    skimage_time_measure(segments)
 
 if __name__ == "__main__":
     main()
