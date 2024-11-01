@@ -661,4 +661,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+![Рисунок 8](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/8.png)
 ```
