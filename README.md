@@ -586,6 +586,294 @@ plt.ylim(0, 5)
 plt.show()
 ```
 ![Рисунок 7](https://github.com/GOSICK070404/Comp_graph_hw/blob/main/7.png)
+## 1.1 — Вращение фигуры
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from scipy.spatial import ConvexHull
+import imageio
+
+# Параметры
+import os
+output_file = os.path.join(os.path.expanduser("~"), "Desktop", "animated_rotate.gif")
+frames = []
+num_frames = 60
+
+# Функция для вращения точки вокруг осей
+def apply_rotation(vec, angles):
+    x_angle, y_angle, z_angle = np.radians(angles)
+
+    rot_x = np.array([
+        [1, 0, 0],
+        [0, np.cos(x_angle), -np.sin(x_angle)],
+        [0, np.sin(x_angle), np.cos(x_angle)]
+    ])
+
+    rot_y = np.array([
+        [np.cos(y_angle), 0, np.sin(y_angle)],
+        [0, 1, 0],
+        [-np.sin(y_angle), 0, np.cos(y_angle)]
+    ])
+
+    rot_z = np.array([
+        [np.cos(z_angle), -np.sin(z_angle), 0],
+        [np.sin(z_angle), np.cos(z_angle), 0],
+        [0, 0, 1]
+    ])
+
+    return rot_z @ rot_y @ rot_x @ vec
+
+# Создание случайных точек
+n_points = 50
+phi = np.linspace(0, 2 * np.pi, int(np.sqrt(n_points)), endpoint=False)
+theta = np.linspace(0, np.pi, int(np.sqrt(n_points)), endpoint=True)
+phi, theta = np.meshgrid(phi, theta)
+phi, theta = phi.flatten(), theta.flatten()
+radius = 1
+x = radius * np.sin(theta) * np.cos(phi)
+y = radius * np.sin(theta) * np.sin(phi)
+z = radius * np.cos(theta)
+points = np.column_stack((x, y, z))
+points = np.column_stack((x, y, z))
+
+# Выпуклая оболочка
+hull = ConvexHull(points)
+
+# Генерация цветов для каждой грани
+face_colors = np.random.rand(len(hull.simplices), 3)
+
+# Настройка визуализации
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+
+for frame in range(num_frames):
+    ax.clear()
+    ax.set_xlim([-2, 2])
+    ax.set_ylim([-2, 2])
+    ax.set_zlim([-2, 2])
+    ax.set_box_aspect([1, 1, 1])
+
+    # Расчёт углов поворота для текущего кадра
+    rotation_angles = (frame * 6, frame * 3, frame * 2)
+
+    # Применение вращения к точкам
+    rotated = np.array([apply_rotation(pt, rotation_angles) for pt in points])
+
+    # Отображение оболочки
+    for idx, simplex in enumerate(hull.simplices):
+        verts = rotated[simplex]
+        poly = Poly3DCollection([verts], color=face_colors[idx], edgecolor="k", alpha=0.8)
+        ax.add_collection3d(poly)
+
+    # Сохранение текущего кадра
+    fig.canvas.draw()
+    frame_data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+    frame_data = frame_data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    frames.append(frame_data)
+
+# Экспорт анимации в GIF
+imageio.mimsave(output_file, frames, fps=15)
+print(f"Анимация сохранена в: {output_file}")
+```
+## 1.2 — Вращение фигуры без показа невидимых частей
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from scipy.spatial import ConvexHull
+import imageio
+
+# Параметры
+import os
+output_file = os.path.join(os.path.expanduser("~"), "Desktop", "animated_rotate_front.gif")
+frames = []
+num_frames = 60
+
+# Функция для вращения точки вокруг осей
+def apply_rotation(vec, angles):
+    x_angle, y_angle, z_angle = np.radians(angles)
+
+    rot_x = np.array([
+        [1, 0, 0],
+        [0, np.cos(x_angle), -np.sin(x_angle)],
+        [0, np.sin(x_angle), np.cos(x_angle)]
+    ])
+
+    rot_y = np.array([
+        [np.cos(y_angle), 0, np.sin(y_angle)],
+        [0, 1, 0],
+        [-np.sin(y_angle), 0, np.cos(y_angle)]
+    ])
+
+    rot_z = np.array([
+        [np.cos(z_angle), -np.sin(z_angle), 0],
+        [np.sin(z_angle), np.cos(z_angle), 0],
+        [0, 0, 1]
+    ])
+
+    return rot_z @ rot_y @ rot_x @ vec
+
+# Создание случайных точек
+n_points = 50
+phi = np.linspace(0, 2 * np.pi, int(np.sqrt(n_points)), endpoint=False)
+theta = np.linspace(0, np.pi, int(np.sqrt(n_points)), endpoint=True)
+phi, theta = np.meshgrid(phi, theta)
+phi, theta = phi.flatten(), theta.flatten()
+radius = 1
+x = radius * np.sin(theta) * np.cos(phi)
+y = radius * np.sin(theta) * np.sin(phi)
+z = radius * np.cos(theta)
+points = np.column_stack((x, y, z))
+points = np.column_stack((x, y, z))
+
+# Выпуклая оболочка
+hull = ConvexHull(points)
+
+# Генерация цветов для каждой грани
+face_colors = np.random.rand(len(hull.simplices), 3)
+
+# Настройка визуализации
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+
+for frame in range(num_frames):
+    ax.clear()
+    ax.set_xlim([-2, 2])
+    ax.set_ylim([-2, 2])
+    ax.set_zlim([-2, 2])
+    ax.set_box_aspect([1, 1, 1])
+
+    # Расчёт углов поворота для текущего кадра
+    rotation_angles = (frame * 6, frame * 3, frame * 2)
+
+    # Применение вращения к точкам
+    rotated = np.array([apply_rotation(pt, rotation_angles) for pt in points])
+
+    # Отображение оболочки
+    for idx, simplex in enumerate(hull.simplices):
+        verts = rotated[simplex]
+        poly = Poly3DCollection([verts], color=face_colors[idx], edgecolor="k", alpha=1)
+        ax.add_collection3d(poly)
+
+    # Сохранение текущего кадра
+    fig.canvas.draw()
+    frame_data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+    frame_data = frame_data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    frames.append(frame_data)
+
+# Экспорт анимации в GIF
+imageio.mimsave(output_file, frames, fps=15)
+print(f"Анимация сохранена в: {output_file}")
+```
+## 1.3 — Вращение фигуры с отражением лучей из какой-то точки
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from scipy.spatial import ConvexHull
+import imageio
+
+# Параметры GIF
+import os
+output_file = os.path.join(os.path.expanduser("~"), "Desktop", "animated_rotate_light.gif")
+num_frames = 240  # Количество кадров
+fps = 60          # Частота кадров
+
+# Универсальная функция вращения точки вокруг осей
+def rotate_3d(point, angles):
+    ax, ay, az = np.radians(angles)
+    
+    Rx = np.array([[1, 0, 0],
+                   [0, np.cos(ax), -np.sin(ax)],
+                   [0, np.sin(ax), np.cos(ax)]])
+
+    Ry = np.array([[np.cos(ay), 0, np.sin(ay)],
+                   [0, 1, 0],
+                   [-np.sin(ay), 0, np.cos(ay)]])
+
+    Rz = np.array([[np.cos(az), -np.sin(az), 0],
+                   [np.sin(az), np.cos(az), 0],
+                   [0, 0, 1]])
+
+    return Rz @ Ry @ Rx @ point
+
+# Генерация точек на сфере
+num_points = 50
+phi = np.linspace(0, 2 * np.pi, int(np.sqrt(num_points)), endpoint=False)
+theta = np.linspace(0, np.pi, int(np.sqrt(num_points)), endpoint=True)
+phi, theta = np.meshgrid(phi, theta)
+phi, theta = phi.flatten(), theta.flatten()
+
+x = np.sin(theta) * np.cos(phi)
+y = np.sin(theta) * np.sin(phi)
+z = np.cos(theta)
+points = np.column_stack((x, y, z))
+
+# Создание выпуклой оболочки
+hull = ConvexHull(points)
+
+# Генерация случайных цветов для граней
+colors = np.random.rand(len(hull.simplices), 3)
+
+# Настройка источника света
+light_position = np.array([2, 2, 2])
+base_intensity = 0.2  # Минимальный уровень освещения
+
+# Создание фигуры для визуализации
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+frames = []
+
+for frame in range(num_frames):
+    ax.clear()
+    ax.set_xlim([-2, 2])
+    ax.set_ylim([-2, 2])
+    ax.set_zlim([-2, 2])
+    ax.set_box_aspect([1, 1, 1])
+
+    # Углы поворота для текущего кадра
+    angles = (frame * 1.5, frame * 0.75, frame * 0.5)
+
+    # Применение вращения к точкам
+    rotated_points = np.array([rotate_3d(p, angles) for p in points])
+
+    # Визуализация граней оболочки с учётом освещения
+    for idx, simplex in enumerate(hull.simplices):
+        triangle = rotated_points[simplex]
+
+        # Нормаль к грани
+        v0, v1 = triangle[1] - triangle[0], triangle[2] - triangle[0]
+        normal = np.cross(v0, v1)
+        normal /= np.linalg.norm(normal)
+
+        # Направление света
+        face_center = np.mean(triangle, axis=0)
+        light_dir = light_position - face_center
+        light_dir /= np.linalg.norm(light_dir)
+
+        # Интенсивность освещения
+        intensity = np.dot(normal, light_dir)
+        intensity = np.clip(intensity, 0, 1)
+
+        # Окончательная интенсивность
+        final_intensity = np.clip(intensity + base_intensity, 0, 1)
+        face_color = colors[idx] * final_intensity
+
+        # Добавление грани
+        poly = Poly3DCollection([triangle], color=face_color, edgecolor='k', alpha=0.9)
+        ax.add_collection3d(poly)
+
+    # Сохранение кадра
+    fig.canvas.draw()
+    frame_data = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    frame_data = frame_data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    frames.append(frame_data)
+
+# Экспорт анимации в GIF
+imageio.mimsave(output_file, frames, fps=fps)
+print(f"GIF сохранён в файл: {output_file}")
+```
 # РК1 - ДЗ1
 ## 1 <Поляков> сравнение производительности алгоритма Брезенхема построения отрезков и метода из библиотеки pyopengl.
 ```python
